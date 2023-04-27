@@ -57,8 +57,6 @@ class PostViewsTests(TestCase):
         POST_EDIT_URL = reverse('posts:post_edit',
                                 kwargs={'post_id': cls.post.id}
                                 )
-        COMMENT_URL = reverse('posts:add_comment',
-                              kwargs={'post_id': cls.post.id})
         cls.templates_pages_names = {
             INDEX_URL: 'posts/index.html',
             GROUP_LIST_URL: 'posts/group_list.html',
@@ -66,7 +64,6 @@ class PostViewsTests(TestCase):
             POST_DETAIL_URL: 'posts/post_detail.html',
             POST_EDIT_URL: 'posts/create_post.html',
             POST_CREATE_URL: 'posts/create_post.html',
-            COMMENT_URL: 'posts:add_comment',
         }
 
     @classmethod
