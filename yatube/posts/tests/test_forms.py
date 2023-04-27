@@ -45,6 +45,14 @@ class PostFormsTests(TestCase):
             author=cls.user,
             text='Тестовый пост',
         )
+        PostFormsTests.post_detail_url = reverse('posts:post_detail',
+                                  kwargs={'post_id': cls.post.id}
+                                  )
+        PostFormsTests.post_edit_url = reverse('posts:post_edit',
+                                kwargs={'post_id': cls.post.id}
+                                )
+        PostFormsTests.comment_url = reverse('posts:add_comment',
+                              kwargs={'post_id': cls.post.id})
 
     @classmethod
     def tearDownClass(cls):
@@ -83,20 +91,16 @@ class PostFormsTests(TestCase):
 
     def test_post_edit_form(self):
         """"Изменение поста в базе данных при отправке валидной формы."""
-        POST_DETAIL_URL = reverse('posts:post_detail',
-                                  kwargs={'post_id': self.post.id})
-        POST_EDIT_URL = reverse('posts:post_edit',
-                                kwargs={'post_id': self.post.id})
         post_count = Post.objects.count()
         form_data = {
             'text': 'Изменение текста поста',
             'group': self.group.id,
         }
-        response = self.authorized_client.post(POST_EDIT_URL,
+        response = self.authorized_client.post(self.post_edit_url,
                                                data=form_data,
                                                follow=True
                                                )
-        self.assertRedirects(response, POST_DETAIL_URL)
+        self.assertRedirects(response, self.post_detail_url)
         self.assertEqual(Post.objects.count(), post_count)
         post = Post.objects.get(pk=self.post.id)
         self.assertEqual(post.text, form_data['text'])
@@ -118,15 +122,13 @@ class PostFormsTests(TestCase):
 
     def test_authorized_user_not_edit_another_post(self):
         """"Авторизованный пользователь не может отредактировать чужой пост."""
-        POST_EDIT_URL = reverse('posts:post_edit',
-                                kwargs={'post_id': self.post.id})
         self.authorized_client.login(username='2')
         post_count = Post.objects.count()
         form_data = {
             'text': 'Изменение текста поста',
             'group': self.group.id,
         }
-        response = self.authorized_client.post(POST_EDIT_URL,
+        response = self.authorized_client.post(self.post_edit_url,
                                                data=form_data,
                                                follow=True
                                                )
@@ -136,9 +138,7 @@ class PostFormsTests(TestCase):
     def test_not_send_comment_anonymous(self):
         """Проверка, что комментировать посты
         может только авторизованный пользователь."""
-        COMMENT_URL = reverse('posts:add_comment',
-                              kwargs={'post_id': self.post.id})
-        self.guest_client.post(COMMENT_URL,
+        self.guest_client.post(self.comment_url,
                                data={'text': 'Тестовый комментарий'},
                                follow=True
                                )
@@ -147,15 +147,11 @@ class PostFormsTests(TestCase):
     def test_not_send_comment_anonymous(self):
         """Проверка, что после комментарий виден на
         странице поста после отправки."""
-        POST_DETAIL_URL = reverse('posts:post_detail',
-                                  kwargs={'post_id': self.post.id})
-        COMMENT_URL = reverse('posts:add_comment',
-                              kwargs={'post_id': self.post.id})
-        response = self.authorized_client.post(COMMENT_URL,
+        response = self.authorized_client.post(self.comment_url,
                                                data={'text':
                                                      'Тестовый комментарий'},
                                                follow=True
                                                )
         comment = Comment.objects.first()
         self.assertEqual(comment.text, 'Тестовый комментарий')
-        self.assertRedirects(response, POST_DETAIL_URL)
+        self.assertRedirects(response, self.post_detail_url)

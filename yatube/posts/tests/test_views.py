@@ -57,6 +57,8 @@ class PostViewsTests(TestCase):
         POST_EDIT_URL = reverse('posts:post_edit',
                                 kwargs={'post_id': cls.post.id}
                                 )
+        COMMENT_URL = reverse('posts:add_comment',
+                              kwargs={'post_id': cls.post.id})
         cls.templates_pages_names = {
             INDEX_URL: 'posts/index.html',
             GROUP_LIST_URL: 'posts/group_list.html',
@@ -64,6 +66,7 @@ class PostViewsTests(TestCase):
             POST_DETAIL_URL: 'posts/post_detail.html',
             POST_EDIT_URL: 'posts/create_post.html',
             POST_CREATE_URL: 'posts/create_post.html',
+            COMMENT_URL: 'posts:add_comment',
         }
 
     @classmethod
@@ -290,6 +293,14 @@ class FollowTests(TestCase):
             text='Тестовый текст комментария',
             group=cls.group,
         )
+        FollowTests.profile_follow_url = reverse('posts:profile_follow',
+                                     kwargs={'username':
+                                             cls.user_following.username}
+                                     )
+        FollowTests.profile_unfollow_url = reverse('posts:profile_unfollow',
+                                       kwargs={'username':
+                                               cls.user_following.username}
+                                       )
 
     def setUp(self):
         self.auth_client_follower = Client()
@@ -299,26 +310,14 @@ class FollowTests(TestCase):
 
     def test_auth_user_can_follow(self):
         """Авторизованный пользователь может подписываться на автора"""
-        PROFILE_FOLLOW_URL = reverse('posts:profile_follow',
-                                     kwargs={'username':
-                                             self.user_following.username}
-                                     )
-        self.auth_client_follower.get(PROFILE_FOLLOW_URL)
+        self.auth_client_follower.get(self.profile_follow_url)
         count_following = Follow.objects.all().count()
         self.assertEqual(count_following, 1)
 
     def test_auth_user_can_unfollow(self):
         """Авторизованный пользователь может отписаться от автора"""
-        PROFILE_FOLLOW_URL = reverse('posts:profile_follow',
-                                     kwargs={'username':
-                                             self.user_following.username}
-                                     )
-        PROFILE_UNFOLLOW_URL = reverse('posts:profile_unfollow',
-                                       kwargs={'username':
-                                               self.user_following.username}
-                                       )
-        self.auth_client_follower.get(PROFILE_FOLLOW_URL)
-        self.auth_client_follower.get(PROFILE_UNFOLLOW_URL)
+        self.auth_client_follower.get(self.profile_follow_url)
+        self.auth_client_follower.get(self.profile_unfollow_url)
         count_following = Follow.objects.all().count()
         self.assertEqual(count_following, 0)
 
@@ -340,10 +339,5 @@ class FollowTests(TestCase):
 
     def test_not_follow_yourself(self):
         """Проверка, что нельзя подписаться на самого себя"""
-        response = self.auth_client_following.get(
-            reverse(
-                'posts:profile_follow',
-                args={self.user_following}
-            )
-        )
+        response = self.auth_client_following.get(self.profile_follow_url)
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
