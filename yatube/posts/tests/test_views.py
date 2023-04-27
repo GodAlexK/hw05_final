@@ -293,14 +293,14 @@ class FollowTests(TestCase):
             text='Тестовый текст комментария',
             group=cls.group,
         )
-        FollowTests.profile_follow_url = reverse('posts:profile_follow',
-                                     kwargs={'username':
-                                             cls.user_following.username}
-                                     )
-        FollowTests.profile_unfollow_url = reverse('posts:profile_unfollow',
-                                       kwargs={'username':
-                                               cls.user_following.username}
-                                       )
+        FollowTests.profile_follow_url = reverse(
+            'posts:profile_follow',
+            kwargs={'username':
+                    cls.user_following.username})
+        FollowTests.profile_unfollow_url = reverse(
+            'posts:profile_unfollow',
+            kwargs={'username':
+                    cls.user_following.username})
 
     def setUp(self):
         self.auth_client_follower = Client()

@@ -46,13 +46,15 @@ class PostFormsTests(TestCase):
             text='Тестовый пост',
         )
         PostFormsTests.post_detail_url = reverse('posts:post_detail',
-                                  kwargs={'post_id': cls.post.id}
-                                  )
+                                                 kwargs={'post_id':
+                                                         cls.post.id}
+                                                 )
         PostFormsTests.post_edit_url = reverse('posts:post_edit',
-                                kwargs={'post_id': cls.post.id}
-                                )
+                                               kwargs={'post_id': cls.post.id}
+                                               )
         PostFormsTests.comment_url = reverse('posts:add_comment',
-                              kwargs={'post_id': cls.post.id})
+                                             kwargs={'post_id': cls.post.id}
+                                             )
 
     @classmethod
     def tearDownClass(cls):
