@@ -1,12 +1,11 @@
 import shutil
 import tempfile
 
-from http import HTTPStatus
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
+from http import HTTPStatus
 
 from posts.models import Group, Post, User, Comment
 
@@ -16,6 +15,14 @@ INDEX_URL = reverse('posts:index')
 GROUP_LIST_URL = reverse('posts:group_list', kwargs={'slug': 'test-slug'})
 PROFILE_URL = reverse('posts:profile', kwargs={'username': 'test-user'})
 POST_CREATE_URL = reverse('posts:post_create')
+IMAGE_WAY = 'posts/small.gif'
+SMALL_GIF = (
+    b'\x47\x49\x46\x38\x39\x61\x02\x00'
+    b'\x01\x00\x80\x00\x00\x00\x00\x00'
+    b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+    b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+    b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+    b'\x0A\x00\x3B')
 
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
@@ -29,14 +36,6 @@ class PostFormsTests(TestCase):
             slug='test-slug',
             description='Тестовое описание',
         )
-        cls.small_gif = (
-            b'\x47\x49\x46\x38\x39\x61\x02\x00'
-            b'\x01\x00\x80\x00\x00\x00\x00\x00'
-            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-            b'\x0A\x00\x3B'
-        )
         cls.comment = Post.objects.create(
             author=cls.user,
             text='Тестовый комментария',
@@ -45,16 +44,18 @@ class PostFormsTests(TestCase):
             author=cls.user,
             text='Тестовый пост',
         )
-        PostFormsTests.post_detail_url = reverse('posts:post_detail',
-                                                 kwargs={'post_id':
-                                                         cls.post.id}
-                                                 )
-        PostFormsTests.post_edit_url = reverse('posts:post_edit',
-                                               kwargs={'post_id': cls.post.id}
-                                               )
-        PostFormsTests.comment_url = reverse('posts:add_comment',
-                                             kwargs={'post_id': cls.post.id}
-                                             )
+        cls.post_detail_url = reverse('posts:post_detail',
+                                      kwargs={'post_id':
+                                              cls.post.id}
+                                      )
+        cls.post_edit_url = reverse('posts:post_edit',
+                                    kwargs={'post_id':
+                                            cls.post.id}
+                                    )
+        cls.comment_url = reverse('posts:add_comment',
+                                  kwargs={'post_id':
+                                          cls.post.id}
+                                  )
 
     @classmethod
     def tearDownClass(cls):
@@ -71,7 +72,7 @@ class PostFormsTests(TestCase):
         post_count = Post.objects.count()
         uploaded = SimpleUploadedFile(
             name='small.gif',
-            content=self.small_gif,
+            content=SMALL_GIF,
             content_type='image/gif'
         )
         form_data = {
@@ -85,10 +86,10 @@ class PostFormsTests(TestCase):
                                                )
         self.assertRedirects(response, PROFILE_URL)
         self.assertEqual(Post.objects.count(), post_count + 1)
-        post_latest = Post.objects.latest('id')
+        post_latest = Post.objects.last()
         self.assertEqual(post_latest.text, form_data['text'])
         self.assertEqual(post_latest.group.id, form_data['group'])
-        self.assertEqual(post_latest.image.name, 'posts/small.gif')
+        self.assertEqual(post_latest.image.name, IMAGE_WAY)
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_post_edit_form(self):
@@ -149,11 +150,13 @@ class PostFormsTests(TestCase):
     def test_not_send_comment_anonymous(self):
         """Проверка, что после комментарий виден на
         странице поста после отправки."""
+        form_data = {
+            'text': 'Тестовый комментарий'
+        }
         response = self.authorized_client.post(self.comment_url,
-                                               data={'text':
-                                                     'Тестовый комментарий'},
+                                               data=form_data,
                                                follow=True
                                                )
         comment = Comment.objects.first()
-        self.assertEqual(comment.text, 'Тестовый комментарий')
+        self.assertEqual(comment.text, form_data['text'])
         self.assertRedirects(response, self.post_detail_url)

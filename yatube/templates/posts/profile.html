@@ -13,6 +13,7 @@
     <h3>
       Всего постов: {{ author.posts.count }} 
     </h3>
+    {% if user.is_authenticated and author != user %}
     {% if following %}
       <a
       class="btn btn-lg btn-light"
@@ -27,6 +28,7 @@
       >
       Подписаться
       </a>
+    {% endif %}
     {% endif %}
 </div>
 

@@ -1,5 +1,4 @@
 from django.db import models
-
 from django.contrib.auth import get_user_model
 
 
@@ -27,9 +26,9 @@ class Post(models.Model):
         verbose_name='Группа',
     )
     image = models.ImageField(
-        'Картинка',
         upload_to='posts/',
-        blank=True
+        blank=True,
+        verbose_name='Изображение',
     )
 
     def __str__(self):
@@ -44,9 +43,7 @@ class Group(models.Model):
     def __str__(self) -> str:
         return self.title
 
-
-class Meta:
-    ordering = ['-order_date']
+    ordering = ('-order_date')
 
 
 class Comment(models.Model):
@@ -54,11 +51,13 @@ class Comment(models.Model):
         Post,
         on_delete=models.CASCADE,
         related_name='comments',
+        verbose_name='Комментарий поста',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='comments',
+        verbose_name='Комментарий пользователя'
     )
     text = models.TextField(verbose_name='Текст комментария')
     created = models.DateTimeField(
@@ -67,7 +66,7 @@ class Comment(models.Model):
     )
 
     def __str__(self) -> str:
-        return self.title
+        return self.text
 
 
 class Follow(models.Model):
@@ -84,3 +83,9 @@ class Follow(models.Model):
         related_name='following',
         verbose_name='Автор',
     )
+
+    class Meta:
+        constraints = [models.UniqueConstraint(
+            fields=['user', 'author'],
+            name='unique_author')
+        ]

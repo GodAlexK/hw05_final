@@ -33,46 +33,49 @@ class PostURLTests(TestCase):
             author=cls.user,
             text="Тестовый пост",
         )
-        PostURLTests.post_detail_url = reverse('posts:post_detail',
-                                               kwargs={'post_id': cls.post.id}
-                                               )
-        PostURLTests.post_edit_url = reverse('posts:post_edit',
-                                             kwargs={'post_id': cls.post.id}
-                                             )
+        cls.post_detail_url = reverse('posts:post_detail',
+                                      kwargs={'post_id':
+                                              cls.post.id}
+                                      )
+        cls.post_edit_url = reverse('posts:post_edit',
+                                    kwargs={'post_id':
+                                            cls.post.id}
+                                    )
+        cls.guest_client = Client()
+        cls.authorized_client = Client()
+        cls.authorized_client.force_login(cls.user)
+        cls.index_data = (INDEX_URL, 'posts/index.html',
+                          cls.guest_client,
+                          HTTPStatus.OK
+                          )
+        cls.group_list_data = (GROUP_LIST_URL, 'posts/group_list.html',
+                               cls.guest_client,
+                               HTTPStatus.OK
+                               )
+        cls.profile_data = (PROFILE_URL, 'posts/profile.html',
+                            cls.guest_client,
+                            HTTPStatus.OK
+                            )
+        cls.post_detail_data = (cls.post_detail_url,
+                                'posts/post_detail.html',
+                                cls.guest_client,
+                                HTTPStatus.OK
+                                )
+        cls.post_create_data = (POST_CREATE_URL, 'posts/create_post.html',
+                                cls.authorized_client,
+                                HTTPStatus.OK
+                                )
+        cls.post_edit_data = (cls.post_edit_url, 'posts/create_post.html',
+                              cls.authorized_client,
+                              HTTPStatus.OK
+                              )
+        cls.unexisting_data = (UNEXISTING_URL, None,
+                               cls.guest_client,
+                               HTTPStatus.NOT_FOUND
+                               )
 
     def setUp(self):
         self.guest_client = Client()
-        self.authorized_client = Client()
-        self.authorized_client.force_login(self.user)
-        self.index_data = (INDEX_URL, 'posts/index.html',
-                           self.guest_client,
-                           HTTPStatus.OK
-                           )
-        self.group_list_data = (GROUP_LIST_URL, 'posts/group_list.html',
-                                self.guest_client,
-                                HTTPStatus.OK
-                                )
-        self.profile_data = (PROFILE_URL, 'posts/profile.html',
-                             self.guest_client,
-                             HTTPStatus.OK
-                             )
-        self.post_detail_data = (self.post_detail_url,
-                                 'posts/post_detail.html',
-                                 self.guest_client,
-                                 HTTPStatus.OK
-                                 )
-        self.post_create_data = (POST_CREATE_URL, 'posts/create_post.html',
-                                 self.authorized_client,
-                                 HTTPStatus.OK
-                                 )
-        self.post_edit_data = (self.post_edit_url, 'posts/create_post.html',
-                               self.authorized_client,
-                               HTTPStatus.OK
-                               )
-        self.unexisting_data = (UNEXISTING_URL, None,
-                                self.guest_client,
-                                HTTPStatus.NOT_FOUND
-                                )
 
     def test_pages_status(self):
         pages = (
