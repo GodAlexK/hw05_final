@@ -4,8 +4,6 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-POSTS_ON_THE_PAGE = 10
-
 
 class Post(models.Model):
     text = models.TextField(verbose_name='Название публикации')
@@ -42,8 +40,6 @@ class Group(models.Model):
 
     def __str__(self) -> str:
         return self.title
-
-    ordering = ('-order_date')
 
 
 class Comment(models.Model):

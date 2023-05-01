@@ -21,7 +21,7 @@ class GroupAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
 
 
-class CommnentAdmin(admin.ModelAdmin):
+class CommentAdmin(admin.ModelAdmin):
     list_display = (
         'author',
         'text',
@@ -58,6 +58,6 @@ admin.site.register(Post, PostAdmin)
 
 admin.site.register(Group, GroupAdmin)
 
-admin.site.register(Comment, CommnentAdmin)
+admin.site.register(Comment, CommentAdmin)
 
 admin.site.register(Follow, FollowAdmin)

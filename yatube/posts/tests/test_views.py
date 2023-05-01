@@ -10,17 +10,18 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 
-from posts.models import Group, Post, Follow, User, POSTS_ON_THE_PAGE
+from posts.models import Group, Post, Follow, User
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
+POSTS_ON_THE_PAGE = 10
 POSTS_ON_THE_SECOND_PAGE = 3
 
 INDEX_URL = reverse('posts:index')
 GROUP_LIST_URL = reverse('posts:group_list', kwargs={'slug': 'test-slug'})
 PROFILE_URL = reverse('posts:profile', kwargs={'username': 'test-user'})
 POST_CREATE_URL = reverse('posts:post_create')
-FOLLOW_URL = reverse('posts:follow_index')
+FOLLOW_URL = reverse('posts:follow_index', None)
 SMALL_GIF = (
     b'\x47\x49\x46\x38\x39\x61\x02\x00'
     b'\x01\x00\x80\x00\x00\x00\x00\x00'

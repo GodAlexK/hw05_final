@@ -1,11 +1,11 @@
 import shutil
 import tempfile
+from http import HTTPStatus
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
-from http import HTTPStatus
 
 from posts.models import Group, Post, User, Comment
 
@@ -15,7 +15,9 @@ INDEX_URL = reverse('posts:index')
 GROUP_LIST_URL = reverse('posts:group_list', kwargs={'slug': 'test-slug'})
 PROFILE_URL = reverse('posts:profile', kwargs={'username': 'test-user'})
 POST_CREATE_URL = reverse('posts:post_create')
-IMAGE_WAY = 'posts/small.gif'
+FOLDER_POSTS_IMAGE = 'posts/'
+IMAGE = 'small.gif'
+IMAGE_WAY = FOLDER_POSTS_IMAGE + IMAGE
 SMALL_GIF = (
     b'\x47\x49\x46\x38\x39\x61\x02\x00'
     b'\x01\x00\x80\x00\x00\x00\x00\x00'
