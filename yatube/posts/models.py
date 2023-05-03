@@ -32,6 +32,10 @@ class Post(models.Model):
     def __str__(self):
         return self.text[:15]
 
+    class Meta:
+        verbose_name = 'Публикация'
+        verbose_name_plural = 'Публикации'
+
 
 class Group(models.Model):
     title = models.CharField(max_length=200, verbose_name='Название')
@@ -40,6 +44,10 @@ class Group(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+    class Meta:
+        verbose_name = 'Группа'
+        verbose_name_plural = 'Группы'
 
 
 class Comment(models.Model):
@@ -64,6 +72,10 @@ class Comment(models.Model):
     def __str__(self) -> str:
         return self.text
 
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
@@ -81,6 +93,8 @@ class Follow(models.Model):
     )
 
     class Meta:
+        verbose_name = 'Подписка на авторов'
+        verbose_name_plural = 'Подписки на авторов'
         constraints = [models.UniqueConstraint(
             fields=['user', 'author'],
             name='unique_author')
