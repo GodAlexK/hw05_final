@@ -1,6 +1,7 @@
 {% load static %}
+
 <header>
-  <nav class="navbar navbar-light" style="background-color: lightskyblue">
+  <nav class="navbar navbar-#f8f9fa" style="background-color: #343a40">
     <div class="container">
       <a class="navbar-brand" href="{% url 'posts:index' %}">
         <img src="{% static 'img/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
@@ -24,7 +25,7 @@
              {% endif %}"
              href="{% url 'about:tech' %}"
           >
-            Технологии
+            О проекте
           </a>
         </li>
 
@@ -41,7 +42,7 @@
           </a>
         </li>
         <li class="nav-item"> 
-          <a class="nav-link link-light
+          <a class="nav-link link
           {% if request.resolver_match.view_name  == 'users:password_change' %}
                active
              {% endif %}"
@@ -57,12 +58,8 @@
              {% endif %}"
              href="{% url 'users:logout' %}"
           >
-            Выйти
+            Выйти из профиля @{{ user.username }}
           </a>
-        </li>
-        <li>
-          Пользователь: {{ user.username }}
-        </li>
         {% else %}
         <li class="nav-item"> 
           <a class="nav-link 
@@ -85,7 +82,7 @@
           </a>
         </li>
         {% endif %}
-  
+ 
       </ul>
     </div>
   </nav>      

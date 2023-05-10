@@ -1,15 +1,20 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Записи сообщества {{ group.title }}
+<div class="container py-3">
+  <h2>
+Записи сообщества: {{ group.title }}
+  </h2>
 {% endblock %}
     
 {% block content %}
-<h1> 
+<h2> 
   {{ group.title }}
-</h1>
-<p> 
-  {{ group.description|linebreaksbr }}
+</h2>
+<p>
+  <font size="5"> 
+    Описание: {{ group.description|linebreaksbr }}
+</font>
 </p>
 
 {% for post in page_obj %}
