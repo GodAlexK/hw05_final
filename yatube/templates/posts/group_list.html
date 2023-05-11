@@ -8,9 +8,14 @@
 {% endblock %}
     
 {% block content %}
-<div class="container py-5">
-  <h1>Записи сообщества: {{ group.title }}</h1>
-  <p>{{ group.description }}</p>
+<h2> 
+  {{ group.title }}
+</h2>
+<p>
+  <font size="5"> 
+    Описание: {{ group.description|linebreaksbr }}
+</font>
+</p>
 
 {% for post in page_obj %}
 {% include "includes/single_post.html" with show_post=False %}
